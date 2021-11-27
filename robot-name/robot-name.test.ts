@@ -39,16 +39,16 @@ describe('Robot', () => {
     expect(robot.name).toMatch(NAME_RE)
   })
 
-  xit('name is the same each time', () => {
+  it('name is the same each time', () => {
     expect(robot.name).toEqual(robot.name)
   })
 
-  xit('different robots have different names', () => {
+  it('different robots have different names', () => {
     const differentRobot = new Robot()
     expect(differentRobot.name).not.toEqual(robot.name)
   })
 
-  xit('is able to reset the name', () => {
+  it('is able to reset the name', () => {
     const originalName = robot.name
 
     robot.resetName()
@@ -58,7 +58,7 @@ describe('Robot', () => {
     expect(originalName).not.toEqual(newName)
   })
 
-  xit('should set a unique name after reset', () => {
+  it('should set a unique name after reset', () => {
     const NUMBER_OF_ROBOTS = 10000
     const usedNames = new Set()
 

@@ -11,35 +11,39 @@ function characterRange(startChar: string, endChar: string) {
   );
 }
 
-function randomNumber(min: number, max: number) {
+function randomNumber(min = 0, max = 9) {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
-function randomName() {
-  const alpha1 = String.fromCharCode(randomNumber("A".charCodeAt(0), "Z".charCodeAt(0)));
-  console.log(alpha1);
-  return alpha1;
+function randomLetter(start = "A", end = "Z") {
+  return String.fromCharCode(
+    randomNumber(start.charCodeAt(0), end.charCodeAt(0))
+  );
 }
+
+const arrayOf = (generator: () => any, size: number) =>
+  new Array(size).fill(null).map(() => generator());
+
+const randomName = () =>
+  [...arrayOf(randomLetter, 2), ...arrayOf(randomNumber, 3)].join("");
 
 export class Robot {
   randomName: string;
 
   constructor() {
-    this.randomName = "x";
-    console.log(randomNumber(0,26));
-    
-    randomName();
+    this.randomName = randomName();
+    console.log(this.randomName);
   }
 
   public get name(): string {
-    throw new Error("Implement Robot#name");
+    return this.randomName;
   }
 
   public resetName(): void {
-    throw new Error("Implement Robot#resetName");
+    this.randomName = randomName();
   }
 
   public static releaseNames(): void {
-    throw new Error("Implement Robot.releaseNames");
+    
   }
 }
