@@ -1,25 +1,26 @@
-function range(size: number, startAt = 0) {
-  return [...Array(size).keys()].map((i) => i + startAt);
-}
+// function range(size: number, startAt = 0) {
+//   return [...Array(size).keys()].map((i) => i + startAt);
+// }
 
-function characterRange(startChar: string, endChar: string) {
-  return String.fromCharCode(
-    ...range(
-      endChar.charCodeAt(0) - startChar.charCodeAt(0) + 1,
-      startChar.charCodeAt(0)
-    )
-  );
-}
+// function characterRange(startChar: string, endChar: string) {
+//   return String.fromCharCode(
+//     ...range(
+//       endChar.charCodeAt(0) - startChar.charCodeAt(0) + 1,
+//       startChar.charCodeAt(0)
+//     )
+//   );
+// }
 
-function randomNumber(min = 0, max = 9) {
-  return Math.floor(Math.random() * (max - min) + min);
-}
+const randomNumber = (min = 0, max = 9) =>
+  Math.floor(Math.random() * (max + 1 - min) + min);
 
-function randomLetter(start = "A", end = "Z") {
-  return String.fromCharCode(
-    randomNumber(start.charCodeAt(0), end.charCodeAt(0))
-  );
-}
+const randomLetter = (start = "A", end = "Z") => {
+  const minCharCode = start.charCodeAt(0);
+  const maxCharCode = end.charCodeAt(0);
+  const charCode = randomNumber(minCharCode, maxCharCode);
+
+  return String.fromCharCode(charCode);
+};
 
 const arrayOf = (generator: () => any, size: number) =>
   new Array(size).fill(null).map(() => generator());
@@ -27,12 +28,28 @@ const arrayOf = (generator: () => any, size: number) =>
 const randomName = () =>
   [...arrayOf(randomLetter, 2), ...arrayOf(randomNumber, 3)].join("");
 
+const newRandomName = (usedNames: string[]): string => {
+  let newName = "";
+
+  while (newName === "") {
+    const name = randomName();
+    if (!usedNames.includes(name)) {
+      newName = name;
+    }
+  }
+
+  return newName;
+};
+
 export class Robot {
   randomName: string;
+  usedNames: string[] = [];
 
   constructor() {
-    this.randomName = randomName();
-    console.log(this.randomName);
+    // TODO: abstract name generator. Could be a Class that has all names
+    const name = newRandomName(this.usedNames);
+    this.randomName = name;
+    this.usedNames.push(name);
   }
 
   public get name(): string {
@@ -40,10 +57,12 @@ export class Robot {
   }
 
   public resetName(): void {
-    this.randomName = randomName();
+    const name = newRandomName(this.usedNames);
+    this.randomName = name;
+    this.usedNames.push(name);
+
+    this.randomName = name;
   }
 
-  public static releaseNames(): void {
-    
-  }
+  public static releaseNames(): void {}
 }
