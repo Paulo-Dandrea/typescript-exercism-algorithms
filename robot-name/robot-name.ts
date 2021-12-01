@@ -1,49 +1,54 @@
-const randomNumber = (min = 0, max = 9) =>
-  Math.floor(Math.random() * (max + 1 - min) + min);
+// I want to know how to separate files here :D
 
-const randomLetter = (start = "A", end = "Z") =>
-  String.fromCharCode(randomNumber(start.charCodeAt(0), end.charCodeAt(0)));
+const helpers = {
+  randomNumber: (min = 0, max = 9): number =>
+    Math.floor(Math.random() * (max + 1 - min) + min),
 
-const arrayOf = (generator: () => any, size: number) =>
-  new Array(size).fill(null).map(() => generator());
+  randomLetter: (start = "A", end = "Z"): string =>
+    String.fromCharCode(
+      helpers.randomNumber(start.charCodeAt(0), end.charCodeAt(0))
+    ),
 
-const randomName = () =>
-  [...arrayOf(randomLetter, 2), ...arrayOf(randomNumber, 3)].join("");
-
-const newRandomName = (usedNames: string[]): string => {
-  let newName = "";
-
-  while (newName === "") {
-    const name = randomName();
-    if (!usedNames.includes(name)) {
-      newName = name;
-    }
-  }
-
-  return newName;
+  arrayOf: <T>(generator: () => T, size: number): T[] =>
+    new Array(size).fill(null).map(() => generator()),
 };
+
+const randomRobotName = (): string =>
+  [
+    ...helpers.arrayOf(helpers.randomLetter, 2),
+    ...helpers.arrayOf(helpers.randomNumber, 3),
+  ].join("");
 
 export class Robot {
   name: string;
-
-  usedNames: string[] = [];
+  private static usedNames = new Set<string>();
 
   constructor() {
-    this.name = this.getName()
+    this.name = this.getName();
   }
 
-  public getName() {
-    const name = newRandomName(this.usedNames);
-    this.usedNames.push(name);
+  newRandomName = (): string => {
+    let newName;
+
+    do {
+      newName = randomRobotName();
+    } while (Robot.usedNames.has(newName));
+
+    return newName;
+  };
+
+  public getName(): string {
+    const name = this.newRandomName();
+    Robot.usedNames.add(name);
     this.name = name;
-    return name
+    return name;
   }
 
   public resetName(): void {
-    this.getName()
+    this.getName();
   }
 
-  static releaseNames(){
-    // TODO: Create all possible names, them, only pop
+  public static releaseNames(): void {
+    Robot.usedNames.clear();
   }
 }
