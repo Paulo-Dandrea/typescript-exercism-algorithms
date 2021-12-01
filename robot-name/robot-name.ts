@@ -1,4 +1,4 @@
-// I want to know how to separate to submit on Exercism
+// I want to know how to separate files for submission to Exercism.
 
 const helpers = {
   randomNumber: (min = 0, max = 9): number =>
